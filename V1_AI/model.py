@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from torch import save, tensor, float, unsqueeze, argmax
+from torch import save, tensor, unsqueeze, argmax, max, float
 from os import path, makedirs
 
 class Linear_QNet(nn.Module):
