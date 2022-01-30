@@ -14,8 +14,6 @@ DARK_BLUE = (0, 50, 150)
 LIGHT_BLUE = (0, 100, 255)
 
 BLOCK_SIZE = 20
-SPEED = 10
-
 
 class Direction(Enum):
     RIGHT = 1
@@ -45,7 +43,7 @@ class SnakeGame:
         self.snake = [self.head,
                       Point(self.head.x-BLOCK_SIZE, self.head.y),
                       Point(self.head.x-(2*BLOCK_SIZE), self.head.y)]
-        
+        self.speed = 10
         self.score = 0
         self.food = None
         self._place_food()
@@ -86,12 +84,13 @@ class SnakeGame:
         # new food
         if self.head == self.food:
             self.score += 1
+            self.speed += 1
             self._place_food()
         else:
             self.snake.pop()
         
         self._update_ui()
-        self.clock.tick(SPEED)
+        self.clock.tick(self.speed)
 
         return game_over, self.score
     
@@ -114,7 +113,7 @@ class SnakeGame:
 
         pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
 
-        text = font.render("Score: " + str(self.score), True, WHITE)
+        text = font.render("Score: " + str(self.score) + " Speed: " + str(self.speed), True, WHITE)
         self.display.blit(text, [0, 0])
         pygame.display.flip()
 
