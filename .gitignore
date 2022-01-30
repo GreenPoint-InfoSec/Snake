@@ -1,5 +1,6 @@
 .venv
 .vscode
+model
 __pycache__
 
 V2
