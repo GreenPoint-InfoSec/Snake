@@ -1,10 +1,12 @@
-from torch import tensor, float, argmax
+# from torch import tensor, float, argmax
+import torch
+import numpy as np
 from random import sample, randint
 from collections import deque
 from game import SnakeGameAI, Direction, Point
 from model import Linear_QNet, QTrainer
 from helper import plot
-import numpy as np
+
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -26,7 +28,7 @@ class Agent:
         point_r = Point(head.x + 20, head.y)
         point_u = Point(head.x, head.y - 20)
         point_d = Point(head.x, head.y + 20)
-
+        
         dir_l = game.direction == Direction.LEFT
         dir_r = game.direction == Direction.RIGHT
         dir_u = game.direction == Direction.UP
@@ -71,7 +73,7 @@ class Agent:
 
     def train_long_memory(self):
         if len(self.memory) > BATCH_SIZE:
-            mini_sample = sample(self.memory, BATCH_SIZE) # list of tuples
+            mini_sample = sample(self.memory, BATCH_SIZE)
         else:
             mini_sample = self.memory
         
@@ -84,15 +86,15 @@ class Agent:
     def get_action(self, state):
         # random moves: trade-off exploration vs exploitation
         self.epsilon = 80 - self.n_games
-        final_move = [0, 0, 0]
+        final_move = [0,0,0]
         
         if randint(0, 200) < self.epsilon:
             move = randint(0, 2)
             final_move[move] = 1
         else:
-            state0 = tensor(state, dtype=float)
+            state0 = torch.tensor(state, dtype=torch.float)
             prediction = self.model(state0)
-            move = argmax(prediction).item()
+            move = torch.argmax(prediction).item()
             final_move[move] = 1
         
         return final_move

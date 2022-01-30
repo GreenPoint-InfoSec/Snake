@@ -7,6 +7,14 @@ from collections import namedtuple
 pygame.init()
 font = pygame.font.SysFont('arial', 25)
 
+class Direction(Enum):
+    RIGHT = 1
+    LEFT = 2
+    UP = 3
+    DOWN = 4
+
+Point = namedtuple('Point', 'x, y')
+
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -16,14 +24,6 @@ LIGHT_BLUE = (0, 100, 255)
 
 BLOCK_SIZE = 20
 SPEED = 60
-
-class Direction(Enum):
-    RIGHT = 1
-    LEFT = 2
-    UP = 3
-    DOWN = 4
-
-Point = namedtuple('Point', 'x, y')
 
 class SnakeGameAI:
 
@@ -96,10 +96,10 @@ class SnakeGameAI:
     def is_collision(self, pt=None):
         if pt is None:
             pt = self.head
-        # boundary
+        # hits boundary
         if pt.x > self.w - BLOCK_SIZE or pt.x < 0 or pt.y > self.h - BLOCK_SIZE or pt.y < 0:
             return True
-        # self
+        # hits itself
         if pt in self.snake[1:]:
             return True
 
@@ -121,7 +121,7 @@ class SnakeGameAI:
     
     def _move(self, action):
         # [straight, right, left]
-        clock_wise = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.RIGHT]
+        clock_wise = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]
         idx = clock_wise.index(self.direction)
 
         if np.array_equal(action, [1, 0, 0]):
