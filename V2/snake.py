@@ -25,7 +25,9 @@ class Snake:
         self.body = [Vector2(11, 12), Vector2(10,12), Vector2(9,12)]
         self.direction = Direction.RIGHT
         self.new_block = False
-    
+        pygame.mixer.init()
+        self.crunch_sound = pygame.mixer.Sound('V2/crunch.wav')
+
     def draw_snake(self):
         for block in self.body:
             x = block.x*BLOCK_SIZE
@@ -49,6 +51,14 @@ class Snake:
     def add_block(self):
         self.new_block = True
 
+    def play_crunch_sound(self):
+        self.crunch_sound.play()
+
+    def reset(self):
+        self.body = [Vector2(11, 12), Vector2(10,12), Vector2(9,12)]
+        self.direction = Direction.RIGHT
+        game.score = 0
+
 
 class Food:
     def __init__(self):
@@ -56,7 +66,6 @@ class Food:
         
     def place_food(self):
         food_rect = pygame.Rect(self.pos.x*BLOCK_SIZE, self.pos.y*BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
-        # pygame.draw.ellipse(display, RED, food_rect)
         game.display.blit(game.apple,food_rect)
 
     def new_food(self):
@@ -77,6 +86,7 @@ class Game:
         self.apple = pygame.image.load('V2/apple.png').convert_alpha()
         self.font = pygame.font.SysFont('arial', 25)
         self.clock = pygame.time.Clock()
+        self.game_over_sound = pygame.mixer.Sound('V2/game_over.wav')
 
     def update(self):
         self.snake.move()
@@ -93,9 +103,14 @@ class Game:
 
     def eat_food(self):
         if self.food.pos == self.snake.body[0]:
+            self.snake.play_crunch_sound()
             self.food.new_food()
             self.add_score()
             self.snake.add_block()
+        
+        for block in self.snake.body[1:]:
+            if block == self.food.pos:
+                self.food.new_food()
 
     def score_board(self):
         score_board = pygame.Rect(0, BLOCK_SIZE/2, BLOCK_SIZE, BLOCK_SIZE)
@@ -114,9 +129,12 @@ class Game:
                 self.game_over()
     
     def game_over(self):
-        pygame.quit()
-        quit()
-  
+        self.play_game_over()
+        self.snake.reset()
+    
+    def play_game_over(self):
+        self.game_over_sound.play()
+
 
 if __name__ == "__main__":
     game = Game()
@@ -133,7 +151,7 @@ if __name__ == "__main__":
                 if event.key == pygame.K_ESCAPE or event.key == pygame.K_x:
                     pygame.quit()
                     quit()
-                if event.key == pygame.K_LEFT and game.snake.direction is not Direction.RIGHT:
+                elif event.key == pygame.K_LEFT and game.snake.direction is not Direction.RIGHT:
                     game.snake.direction = Direction.LEFT
                 elif event.key == pygame.K_RIGHT and game.snake.direction is not Direction.LEFT:
                     game.snake.direction = Direction.RIGHT
