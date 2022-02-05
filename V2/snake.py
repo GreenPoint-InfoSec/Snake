@@ -27,7 +27,7 @@ class Snake:
         self.direction = Direction.PAUSE
         self.new_block = False
         pygame.mixer.init()
-        self.crunch_sound = pygame.mixer.Sound('V2/crunch.wav')
+        self.crunch_sound = pygame.mixer.Sound('V2/src/wav/crunch.wav')
 
     def draw_snake(self):
         for block in self.body:
@@ -88,11 +88,11 @@ class Game:
         pygame.init()
         pygame.display.set_caption('Snake')
         self.display = pygame.display.set_mode((W*BLOCK_SIZE, H*BLOCK_SIZE))
-        self.apple = pygame.image.load('V2/apple.png').convert_alpha()
-        self.trophy = pygame.image.load('V2/trophy.png').convert_alpha()
+        self.apple = pygame.image.load('V2/src/png/apple.png').convert_alpha()
+        self.trophy = pygame.image.load('V2/src/png/trophy.png').convert_alpha()
+        self.game_over_sound = pygame.mixer.Sound('V2/src/wav/game_over.wav')
         self.font = pygame.font.SysFont('arial', 25)
         self.clock = pygame.time.Clock()
-        self.game_over_sound = pygame.mixer.Sound('V2/game_over.wav')
 
     def update(self):
         self.snake.move()
@@ -171,7 +171,10 @@ if __name__ == "__main__":
                 game.update()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE or event.key == pygame.K_x:
-                    print(str(game.snakes) + " Snakes, High Score: " + str(game.high_score))
+                    if game.snakes == 2:
+                        print(str(game.snakes-1) + " Snake, High Score: " + str(game.high_score))
+                    else:
+                        print(str(game.snakes-1) + " Snakes, High Score: " + str(game.high_score))
                     pygame.quit()
                     quit()
                 elif event.key == pygame.K_LEFT and game.snake.direction is not Direction.RIGHT and game.snake.direction is not Direction.PAUSE:
@@ -183,7 +186,10 @@ if __name__ == "__main__":
                 elif event.key == pygame.K_DOWN and game.snake.direction is not Direction.UP:
                     game.snake.direction = Direction.DOWN
             elif event.type == pygame.QUIT:
-                print(str(game.snakes) + " Snakes, High Score: " + str(game.high_score))
+                if game.snakes == 2:
+                    print(str(game.snakes-1) + " Snake, High Score: " + str(game.high_score))
+                else:
+                    print(str(game.snakes-1) + " Snakes, High Score: " + str(game.high_score))
                 pygame.quit()
                 quit()
         
