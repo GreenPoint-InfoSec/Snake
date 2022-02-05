@@ -18,6 +18,7 @@ class Direction:
     LEFT = Vector2(-1, 0)
     UP = Vector2(0, -1)
     DOWN = Vector2(0, 1)
+    PAUSE = Vector2(0,0)
 
 
 class Snake:
@@ -38,7 +39,9 @@ class Snake:
             pygame.draw.ellipse(game.display, LIGHT_GREEN, inner_rect)
     
     def move(self):
-        if self.new_block == True:
+        if self.direction == Direction.PAUSE:
+            pass
+        elif self.new_block == True:
             body_copy = self.body[:]
             body_copy.insert(0,body_copy[0] + self.direction)
             self.body = body_copy[:]
@@ -55,8 +58,8 @@ class Snake:
         self.crunch_sound.play()
 
     def reset(self):
+        self.direction = Direction.PAUSE
         self.body = [Vector2(11, 12), Vector2(10,12), Vector2(9,12)]
-        self.direction = Direction.RIGHT
         game.score = 0
 
 
@@ -116,8 +119,14 @@ class Game:
     def score_board(self):
         score_board = pygame.Rect(BLOCK_SIZE/2, BLOCK_SIZE/2, BLOCK_SIZE, BLOCK_SIZE)
         self.display.blit(self.apple, score_board)
-        text = self.font.render(str(self.score), True, WHITE)
-        self.display.blit(text, [2*BLOCK_SIZE, BLOCK_SIZE/4])
+        score_text = self.font.render(str(self.score), True, WHITE)
+        self.display.blit(score_text, [2*BLOCK_SIZE, BLOCK_SIZE/4])
+        length_board_outer = pygame.Rect(4*BLOCK_SIZE, BLOCK_SIZE/2, BLOCK_SIZE, BLOCK_SIZE)
+        length_board_inner = pygame.Rect(4*BLOCK_SIZE+2, BLOCK_SIZE/2+2, BLOCK_SIZE-4, BLOCK_SIZE-4)
+        pygame.draw.rect(self.display, DARK_GREEN, length_board_outer)
+        pygame.draw.ellipse(game.display, LIGHT_GREEN, length_board_inner)
+        length_text = self.font.render(str(len(self.snake.body)), True, WHITE)
+        self.display.blit(length_text, [5.5*BLOCK_SIZE, BLOCK_SIZE/4])
 
     def add_score(self):
         self.score += 1
@@ -132,7 +141,9 @@ class Game:
     def game_over(self):
         if self.score > self.high_score:
             self.high_score = self.score
-            print("New High Score: " + str(self.high_score))
+            print("Game Over! New High Score: " + str(self.high_score))
+        else:
+            print("Game Over! Score: " + str(self.score))
         self.play_game_over()
         self.snake.reset()
     
@@ -153,9 +164,10 @@ if __name__ == "__main__":
                 game.update()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE or event.key == pygame.K_x:
+                    print("High Score: " + str(game.high_score))
                     pygame.quit()
                     quit()
-                elif event.key == pygame.K_LEFT and game.snake.direction is not Direction.RIGHT:
+                elif event.key == pygame.K_LEFT and game.snake.direction is not Direction.RIGHT and game.snake.direction is not Direction.PAUSE:
                     game.snake.direction = Direction.LEFT
                 elif event.key == pygame.K_RIGHT and game.snake.direction is not Direction.LEFT:
                     game.snake.direction = Direction.RIGHT
@@ -164,6 +176,7 @@ if __name__ == "__main__":
                 elif event.key == pygame.K_DOWN and game.snake.direction is not Direction.UP:
                     game.snake.direction = Direction.DOWN
             elif event.type == pygame.QUIT:
+                print("High Score: " + str(game.high_score))
                 pygame.quit()
                 quit()
         
