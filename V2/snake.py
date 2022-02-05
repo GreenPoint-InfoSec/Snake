@@ -79,6 +79,7 @@ class Game:
         self.food = Food()
         self.snake = Snake()
         self.score = 0
+        self.high_score = 0
         self.speed = 100
         pygame.init()
         pygame.display.set_caption('Snake')
@@ -113,10 +114,10 @@ class Game:
                 self.food.new_food()
 
     def score_board(self):
-        score_board = pygame.Rect(0, BLOCK_SIZE/2, BLOCK_SIZE, BLOCK_SIZE)
+        score_board = pygame.Rect(BLOCK_SIZE/2, BLOCK_SIZE/2, BLOCK_SIZE, BLOCK_SIZE)
         self.display.blit(self.apple, score_board)
         text = self.font.render(str(self.score), True, WHITE)
-        self.display.blit(text, [1.5*BLOCK_SIZE, BLOCK_SIZE/4])
+        self.display.blit(text, [2*BLOCK_SIZE, BLOCK_SIZE/4])
 
     def add_score(self):
         self.score += 1
@@ -129,6 +130,9 @@ class Game:
                 self.game_over()
     
     def game_over(self):
+        if self.score > self.high_score:
+            self.high_score = self.score
+            print("New High Score: " + str(self.high_score))
         self.play_game_over()
         self.snake.reset()
     
