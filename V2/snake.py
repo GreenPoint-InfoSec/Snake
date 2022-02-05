@@ -33,11 +33,11 @@ class Snake:
         for block in self.body:
             x = block.x*BLOCK_SIZE
             y = block.y*BLOCK_SIZE
-            outer_rect = pygame.Rect(x, y, BLOCK_SIZE, BLOCK_SIZE)
+            outer_rect = pygame.Rect(x, y, BLOCK_SIZE-1, BLOCK_SIZE-1)
             inner_rect = pygame.Rect(x+2, y+2, BLOCK_SIZE-4, BLOCK_SIZE-4)
             pygame.draw.rect(game.display, DARK_GREEN, outer_rect)
             pygame.draw.ellipse(game.display, LIGHT_GREEN, inner_rect)
-    
+
     def move(self):
         if self.direction == Direction.PAUSE:
             pass
@@ -185,6 +185,8 @@ if __name__ == "__main__":
                     game.snake.direction = Direction.UP
                 elif event.key == pygame.K_DOWN and game.snake.direction is not Direction.UP:
                     game.snake.direction = Direction.DOWN
+                # elif event.key == pygame.K_SPACE or event.key == pygame.K_p:
+                #     game.pause()
             elif event.type == pygame.QUIT:
                 if game.snakes == 2:
                     print(str(game.snakes-1) + " Snake, High Score: " + str(game.high_score))
